@@ -1,0 +1,862 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DIBYARANJAN // OMNI-OPERATIONAL CYBER TERMINAL v5.0</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        /* Base Cyber Aesthetics */
+        body {
+            font-family: 'Share Tech Mono', 'Fira Code', monospace;
+            background-color: #030706;
+            color: #22c55e;
+            overflow-x: hidden;
+            user-select: none;
+        }
+
+        /* Matrix Canvas Background Overlay */
+        #matrix-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: 0;
+            opacity: 0.25;
+            pointer-events: none;
+        }
+
+        /* CRT Scanlines Screen Simulation */
+        .crt-overlay::before {
+            content: " ";
+            display: block;
+            position: fixed;
+            top: 0; left: 0; bottom: 0; right: 0;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.45) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.03), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.03));
+            z-index: 50;
+            background-size: 100% 3px, 6px 100%;
+            pointer-events: none;
+        }
+
+        /* Sci-Fi Text Glitch */
+        .glitch {
+            position: relative;
+            display: inline-block;
+        }
+        .glitch::before, .glitch::after {
+            content: attr(data-text);
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            clip: rect(0, 0, 0, 0);
+        }
+        .glitch::before {
+            left: -2px;
+            text-shadow: 2px 0 #06b6d4;
+            animation: glitch-anim-1 2.5s infinite linear alternate-reverse;
+        }
+        .glitch::after {
+            left: 2px;
+            text-shadow: -2px 0 #ef4444;
+            animation: glitch-anim-2 3.5s infinite linear alternate-reverse;
+        }
+
+        @keyframes glitch-anim-1 {
+            0% { clip: rect(10px, 9999px, 30px, 0); }
+            20% { clip: rect(50px, 9999px, 80px, 0); }
+            40% { clip: rect(20px, 9999px, 40px, 0); }
+            60% { clip: rect(70px, 9999px, 10px, 0); }
+            80% { clip: rect(30px, 9999px, 60px, 0); }
+            100% { clip: rect(90px, 9999px, 20px, 0); }
+        }
+        @keyframes glitch-anim-2 {
+            0% { clip: rect(15px, 9999px, 60px, 0); }
+            20% { clip: rect(80px, 9999px, 20px, 0); }
+            40% { clip: rect(30px, 9999px, 70px, 0); }
+            60% { clip: rect(50px, 9999px, 10px, 0); }
+            80% { clip: rect(90px, 9999px, 40px, 0); }
+            100% { clip: rect(20px, 9999px, 80px, 0); }
+        }
+
+        /* Intense Brute Force Red Emergency Alarm Animation */
+        .alarm-flash {
+            animation: alarmRed 0.4s infinite alternate;
+        }
+        @keyframes alarmRed {
+            0% { box-shadow: 0 0 20px rgba(239, 68, 68, 0.6), inset 0 0 20px rgba(239, 68, 68, 0.4); border-color: #ef4444; }
+            100% { box-shadow: 0 0 45px rgba(239, 68, 68, 1), inset 0 0 35px rgba(239, 68, 68, 0.8); border-color: #f87171; }
+        }
+
+        /* Cyberpunk Glass Panels */
+        .cyber-panel {
+            border: 1px solid rgba(34, 197, 94, 0.35);
+            box-shadow: 0 0 18px rgba(34, 197, 94, 0.1), inset 0 0 15px rgba(34, 197, 94, 0.04);
+            background: rgba(6, 11, 8, 0.90);
+            backdrop-filter: blur(12px);
+        }
+
+        .cyber-panel-cyan {
+            border: 1px solid rgba(6, 182, 212, 0.35);
+            box-shadow: 0 0 18px rgba(6, 182, 212, 0.1), inset 0 0 15px rgba(6, 182, 212, 0.04);
+            background: rgba(5, 12, 14, 0.90);
+            backdrop-filter: blur(12px);
+        }
+
+        /* Terminal Cursor Blink */
+        .cursor-blink {
+            animation: blink 0.9s infinite;
+        }
+        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+
+        /* Custom Scrollbars */
+        ::-webkit-scrollbar {
+            width: 4px;
+            height: 4px;
+        }
+        ::-webkit-scrollbar-track { background: rgba(2, 6, 4, 0.9); }
+        ::-webkit-scrollbar-thumb { background: #15803d; border-radius: 2px; }
+        ::-webkit-scrollbar-thumb:hover { background: #22c55e; }
+    </style>
+</head>
+<body class="crt-overlay min-h-screen relative flex flex-col justify-between selection:bg-green-500 selection:text-black">
+
+    <!-- Matrix Code Background Canvas -->
+    <canvas id="matrix-canvas"></canvas>
+
+    <div class="relative z-10 flex flex-col min-h-screen p-2 sm:p-4 gap-3 max-w-[1900px] mx-auto w-full">
+
+        <!-- HEADER TOOLBAR: OPERATOR DIBYARANJAN IDENTITY -->
+        <header class="cyber-panel p-3.5 rounded-lg flex flex-wrap justify-between items-center gap-4">
+            <div class="flex items-center gap-3">
+                <div class="relative flex items-center justify-center w-11 h-11 rounded border border-green-500 bg-green-950/40 shadow-lg shadow-green-500/20">
+                    <i class="fa-solid fa-terminal text-green-400 text-2xl animate-pulse"></i>
+                </div>
+                <div>
+                    <h1 class="text-xl md:text-2xl font-bold tracking-wider text-green-400 glitch" data-text="DIBYARANJAN // OMNI-OPERATIONAL TERMINAL">
+                        DIBYARANJAN // OMNI-OPERATIONAL TERMINAL
+                    </h1>
+                    <div class="flex items-center gap-2 text-xs">
+                        <span class="text-gray-400">OPERATOR:</span>
+                        <span class="text-yellow-400 font-bold tracking-widest">DIBYARANJAN</span>
+                        <span class="text-gray-600">|</span>
+                        <span class="text-cyan-400 font-semibold">CLEARANCE: OMNI-ROOT LEVEL 5</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Operational Controls & Sound Toggles -->
+            <div class="flex flex-wrap items-center gap-2 text-xs">
+                <div class="flex items-center gap-2 bg-black/80 px-3 py-1.5 rounded border border-green-800">
+                    <span class="w-2.5 h-2.5 rounded-full bg-green-500 animate-ping"></span>
+                    <span class="text-gray-400">NODE:</span>
+                    <span class="text-green-400 font-bold tracking-wider">SECURE-QUANTUM-NODE</span>
+                </div>
+                
+                <button id="typer-btn" onclick="toggleTyperMode()" class="px-3 py-1.5 rounded border border-yellow-600 bg-yellow-950/40 hover:bg-yellow-800/60 text-yellow-400 font-bold transition flex items-center gap-1.5">
+                    <i class="fa-solid fa-keyboard"></i>
+                    <span>DIGITAL TYPER: <span id="typer-status" class="text-green-400 font-bold">ACTIVE</span></span>
+                </button>
+                
+                <button id="audio-toggle" onclick="toggleAudio()" class="px-3 py-1.5 rounded border border-green-700 bg-green-950/40 hover:bg-green-800/60 text-green-400 transition flex items-center gap-1.5">
+                    <i id="audio-icon" class="fa-solid fa-volume-high"></i>
+                    <span class="hidden sm:inline">AUDIO FX</span>
+                </button>
+
+                <button onclick="toggleCRT()" class="px-3 py-1.5 rounded border border-cyan-700 bg-cyan-950/40 hover:bg-cyan-800/60 text-cyan-400 transition flex items-center gap-1.5">
+                    <i class="fa-solid fa-tv"></i>
+                    <span class="hidden sm:inline">CRT SCANLINES</span>
+                </button>
+            </div>
+        </header>
+
+        <!-- MAIN TERMINAL DASHBOARD (3-COLUMN LAYOUT) -->
+        <main class="grid grid-cols-1 lg:grid-cols-12 gap-3 flex-1">
+
+            <!-- LEFT COLUMN: SYSTEM TELEMETRY & LIVE TARGET RADAR (3 COLS) -->
+            <section class="lg:col-span-3 flex flex-col gap-3">
+
+                <!-- Core System Telemetry -->
+                <div class="cyber-panel p-3.5 rounded-lg flex flex-col gap-3">
+                    <div class="flex justify-between items-center border-b border-green-900/80 pb-2">
+                        <span class="text-xs font-bold tracking-wider text-green-400 flex items-center gap-2">
+                            <i class="fa-solid fa-microchip"></i> SYSTEM TELEMETRY (LIVE)
+                        </span>
+                        <span class="text-[10px] text-green-500 font-bold tracking-widest animate-pulse">ONLINE</span>
+                    </div>
+
+                    <!-- CPU Core Stats -->
+                    <div>
+                        <div class="flex justify-between text-[11px] mb-1">
+                            <span class="text-gray-400">CPU LOAD (32-THREAD QUANTUM)</span>
+                            <span id="cpu-val" class="text-green-400 font-bold">42%</span>
+                        </div>
+                        <div class="w-full bg-black rounded h-1.5 border border-green-900 overflow-hidden">
+                            <div id="cpu-bar" class="bg-green-500 h-1.5 transition-all duration-300" style="width: 42%"></div>
+                        </div>
+                    </div>
+
+                    <!-- RAM Usage -->
+                    <div>
+                        <div class="flex justify-between text-[11px] mb-1">
+                            <span class="text-gray-400">MEMORY (128GB DDR5 ALLOC)</span>
+                            <span id="ram-val" class="text-cyan-400 font-bold">28.4 / 128 GB</span>
+                        </div>
+                        <div class="w-full bg-black rounded h-1.5 border border-cyan-900 overflow-hidden">
+                            <div id="ram-bar" class="bg-cyan-500 h-1.5 transition-all duration-300" style="width: 22%"></div>
+                        </div>
+                    </div>
+
+                    <!-- Core Thermal Heat Index -->
+                    <div>
+                        <div class="flex justify-between text-[11px] mb-1">
+                            <span class="text-gray-400">CORE THERMAL GAUGE</span>
+                            <span id="temp-val" class="text-yellow-400 font-bold">48°C</span>
+                        </div>
+                        <div class="w-full bg-black rounded h-1.5 border border-yellow-900 overflow-hidden">
+                            <div id="temp-bar" class="bg-yellow-500 h-1.5 transition-all duration-300" style="width: 48%"></div>
+                        </div>
+                    </div>
+
+                    <!-- Network Duplex Graph -->
+                    <div>
+                        <div class="flex justify-between text-[11px] mb-1">
+                            <span class="text-gray-400">DATA TRANSMISSION RATE</span>
+                            <span id="net-val" class="text-emerald-400 font-bold">1.42 GB/s</span>
+                        </div>
+                        <canvas id="net-chart" class="w-full h-16 rounded border border-green-900/80 bg-black/90"></canvas>
+                    </div>
+                </div>
+
+                <!-- Live Target SVG Radar Scanner -->
+                <div class="cyber-panel-cyan p-3.5 rounded-lg flex-1 flex flex-col gap-2 min-h-[260px]">
+                    <div class="flex justify-between items-center border-b border-cyan-900/80 pb-2">
+                        <span class="text-xs font-bold tracking-wider text-cyan-400 flex items-center gap-2">
+                            <i class="fa-solid fa-satellite-dish"></i> TARGET PORT & RADAR SCANNER
+                        </span>
+                        <button onclick="startPortScan()" class="text-[10px] bg-cyan-950 border border-cyan-600 px-2.5 py-1 rounded text-cyan-300 hover:bg-cyan-800 transition font-bold">
+                            RUN SCAN
+                        </button>
+                    </div>
+
+                    <!-- Target IP Specifier -->
+                    <div class="flex items-center gap-2 mt-1">
+                        <span class="text-[11px] text-gray-400">TARGET:</span>
+                        <input id="scan-target-ip" type="text" value="10.84.192.254" class="flex-1 bg-black border border-cyan-900 rounded px-2 py-1 text-xs text-cyan-300 font-mono outline-none" />
+                    </div>
+
+                    <!-- Animated SVG Radar Scope -->
+                    <div class="relative flex justify-center items-center my-1 bg-black/80 rounded border border-cyan-950 p-2">
+                        <svg class="w-28 h-28" viewBox="0 0 100 100">
+                            <circle cx="50" cy="50" r="45" fill="none" stroke="#0e7490" stroke-width="1" />
+                            <circle cx="50" cy="50" r="30" fill="none" stroke="#155e75" stroke-width="1" stroke-dasharray="3 3" />
+                            <circle cx="50" cy="50" r="15" fill="none" stroke="#164e63" stroke-width="1" />
+                            <line x1="50" y1="5" x2="50" y2="95" stroke="#155e75" stroke-width="0.8" />
+                            <line x1="5" y1="50" x2="95" y2="50" stroke="#155e75" stroke-width="0.8" />
+                            
+                            <!-- Rotating Radar Sweep Line -->
+                            <line id="radar-sweep" x1="50" y1="50" x2="50" y2="5" stroke="#06b6d4" stroke-width="2">
+                                <animateTransform attributeName="transform" type="rotate" from="0 50 50" to="360 50 50" dur="3s" repeatCount="indefinite" />
+                            </line>
+                            <!-- Detected Nodes -->
+                            <circle cx="65" cy="35" r="2.5" fill="#ef4444" class="animate-ping" />
+                            <circle cx="35" cy="70" r="2" fill="#22c55e" />
+                            <circle cx="75" cy="65" r="2" fill="#eab308" />
+                        </svg>
+                    </div>
+
+                    <div id="port-scan-logs" class="flex-1 bg-black/90 p-2 rounded border border-cyan-950 font-mono text-[11px] overflow-y-auto space-y-1 text-cyan-400/90 max-h-[140px]">
+                        <div class="text-gray-500">// Specify target IP and click 'RUN SCAN'...</div>
+                    </div>
+                </div>
+
+            </section>
+
+            <!-- CENTER COLUMN: CLI TERMINAL & REAL-TIME HACKER CODE IDE (6 COLS) -->
+            <section class="lg:col-span-6 flex flex-col gap-3">
+                
+                <!-- DIGITAL HACKER TYPER CODE STREAMING WINDOW -->
+                <div class="cyber-panel p-3.5 rounded-lg flex flex-col h-[280px]">
+                    <div class="flex justify-between items-center border-b border-green-900/80 pb-2 mb-2">
+                        <div class="flex items-center gap-2">
+                            <i class="fa-solid fa-code text-yellow-400 text-xs"></i>
+                            <span class="text-xs font-bold text-yellow-400 tracking-wider">LIVE HACKER CODE STREAM (ANY KEY DIGITIZER)</span>
+                        </div>
+                        <span class="text-[10px] text-gray-400 animate-pulse">&lt;Mash any physical key to inject exploit code&gt;</span>
+                    </div>
+
+                    <!-- Code IDE Screen -->
+                    <div id="code-ide-box" class="flex-1 bg-black/95 p-2.5 rounded border border-green-950 font-mono text-xs overflow-y-auto text-emerald-400 leading-relaxed whitespace-pre-wrap">
+                        <span class="text-gray-500">// Dibyaranjan Exploit Engine initialized.
+// Press ANY key on your keyboard to auto-type quantum exploit payload...</span>
+                    </div>
+                </div>
+
+                <!-- INTERACTIVE CLI COMMAND TERMINAL -->
+                <div class="cyber-panel p-3.5 rounded-lg flex-1 flex flex-col min-h-[340px]">
+                    <div class="flex justify-between items-center border-b border-green-900/80 pb-2 mb-2">
+                        <div class="flex items-center gap-2">
+                            <span class="w-3 h-3 rounded-full bg-red-500 inline-block"></span>
+                            <span class="w-3 h-3 rounded-full bg-yellow-500 inline-block"></span>
+                            <span class="w-3 h-3 rounded-full bg-green-500 inline-block"></span>
+                            <span class="text-xs font-bold text-green-400 ml-2 tracking-wide">dibyaranjan@omni-terminal:~#</span>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <button onclick="executeCommand('help')" class="text-xs text-cyan-400 hover:text-cyan-200 transition">HELP</button>
+                            <button onclick="executeCommand('clear')" class="text-xs text-green-600 hover:text-green-300 transition">CLEAR</button>
+                        </div>
+                    </div>
+
+                    <!-- Terminal Console Log Output -->
+                    <div id="terminal-output" class="flex-1 overflow-y-auto font-mono text-xs sm:text-sm space-y-1.5 pr-2 mb-2 leading-relaxed">
+                        <div class="text-gray-500">========================================================================</div>
+                        <div class="text-green-400 font-bold">DIBYARANJAN OPERATIONAL CYBER TERMINAL v5.0 (QUANTUM-EDITION)</div>
+                        <div class="text-cyan-400">AUTHENTICATED OPERATOR: <span class="text-yellow-400 font-bold">DIBYARANJAN</span></div>
+                        <div class="text-gray-400">Type <span class="text-green-300 font-bold">'help'</span> for operational commands or <span class="text-green-300 font-bold">'whoami'</span> for credentials.</div>
+                        <div class="text-gray-500">========================================================================</div>
+                    </div>
+
+                    <!-- Prompt Input Form -->
+                    <form id="terminal-form" onsubmit="handleTerminalSubmit(event)" class="flex items-center gap-2 border-t border-green-900/80 pt-2">
+                        <span class="text-green-400 font-bold text-xs sm:text-sm shrink-0">dibyaranjan@root:~#</span>
+                        <input id="terminal-input" type="text" autocomplete="off" spellcheck="false" 
+                               class="flex-1 bg-transparent border-none outline-none text-green-300 font-mono text-xs sm:text-sm caret-green-400"
+                               placeholder="Type command or mash keyboard..." />
+                        <span class="cursor-blink text-green-400 font-bold">█</span>
+                    </form>
+                </div>
+
+            </section>
+
+            <!-- RIGHT COLUMN: INTENSE HEAVY PASSWORD BRUTEFORCE SIMULATOR (3 COLS) -->
+            <section class="lg:col-span-3 flex flex-col gap-3">
+
+                <!-- INTENSE HEAVY BRUTE FORCE CRACKER BOX -->
+                <div id="cracker-box" class="cyber-panel p-4 rounded-lg flex flex-col gap-3 transition-all relative">
+                    <div class="flex items-center justify-between border-b border-green-900/80 pb-2">
+                        <span class="text-xs font-bold tracking-wider text-green-400 flex items-center gap-2">
+                            <i class="fa-solid fa-triangle-exclamation text-yellow-500"></i> HEAVY BRUTE FORCE DECRYPTER
+                        </span>
+                        <span id="crack-status" class="text-[10px] text-gray-500 font-bold tracking-widest">IDLE</span>
+                    </div>
+
+                    <div class="space-y-3">
+                        <div>
+                            <label class="text-[10px] text-gray-400 block mb-1">TARGET PASSWORD HASH / KEY</label>
+                            <input id="crack-target" type="text" value="DIBYA_QUANTUM_CORE_99X" maxlength="28" 
+                                   class="w-full bg-black border border-green-900 rounded p-1.5 text-xs text-green-400 font-mono outline-none uppercase tracking-widest font-bold" />
+                        </div>
+
+                        <!-- Rapid Character Mutation Box -->
+                        <div class="relative">
+                            <div class="text-[10px] text-gray-400 mb-1 flex justify-between">
+                                <span>MUTATION DECRYPTION MATRIX</span>
+                                <span id="crack-algorithm" class="text-cyan-400">SHA256+MD5</span>
+                            </div>
+                            <div id="crack-display" class="bg-black p-3.5 rounded border border-green-700 text-center font-mono text-sm sm:text-base font-bold text-green-400 tracking-widest min-h-[58px] flex items-center justify-center break-all shadow-inner">
+                                **************************
+                            </div>
+                        </div>
+
+                        <!-- Real-Time Crack Telemetry -->
+                        <div class="bg-black/80 p-2.5 rounded border border-green-900/60 space-y-1.5 text-[11px] font-mono">
+                            <div class="flex justify-between text-gray-400">
+                                <span>ATTEMPTS EVALUATED:</span>
+                                <span id="crack-attempts" class="text-yellow-400 font-bold">0</span>
+                            </div>
+                            <div class="flex justify-between text-gray-400">
+                                <span>HASH RATE SPEED:</span>
+                                <span id="crack-speed" class="text-cyan-400 font-bold">0 GH/s</span>
+                            </div>
+                            <div class="flex justify-between text-gray-400">
+                                <span>QUANTUM THREADS:</span>
+                                <span class="text-green-400 font-bold">64 PARALLEL NODES</span>
+                            </div>
+                            <div class="flex justify-between text-gray-400">
+                                <span>MEMORY FLICKER ADDR:</span>
+                                <span id="crack-mem-addr" class="text-yellow-500 font-bold">0x00000000</span>
+                            </div>
+                        </div>
+
+                        <!-- Progress Bar & Percentage -->
+                        <div>
+                            <div class="flex justify-between text-[10px] text-gray-400 mb-1">
+                                <span>DECRYPTION PROGRESS</span>
+                                <span id="crack-pct" class="text-green-400 font-bold">0%</span>
+                            </div>
+                            <div class="w-full bg-black rounded-full h-2.5 border border-green-900 overflow-hidden">
+                                <div id="crack-bar" class="bg-green-500 h-2.5 rounded-full transition-all duration-100" style="width: 0%"></div>
+                            </div>
+                        </div>
+
+                        <!-- Heavy Crack Trigger Button -->
+                        <button onclick="startHeavyBruteForce()" class="w-full py-2.5 rounded border border-green-500 bg-green-950/90 hover:bg-green-700 text-green-200 text-xs font-bold tracking-wider transition shadow-lg flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-bolt text-yellow-400"></i> INITIATE HEAVY BRUTE-FORCE
+                        </button>
+                    </div>
+                </div>
+
+                <!-- QUICK ACTIONS & SYSTEM OVERRIDE -->
+                <div class="cyber-panel-cyan p-3.5 rounded-lg flex flex-col gap-2.5">
+                    <span class="text-xs font-bold text-cyan-400 flex items-center gap-2">
+                        <i class="fa-solid fa-key"></i> RAPID SYSTEM OVERRIDE
+                    </span>
+                    <p class="text-[11px] text-gray-400">Execute root command privileges for Operator Dibyaranjan:</p>
+                    
+                    <div class="grid grid-cols-2 gap-2">
+                        <button onclick="executeOverride()" class="py-1.5 px-2 rounded border border-cyan-500 bg-cyan-950/70 hover:bg-cyan-800 text-cyan-200 text-xs font-bold transition text-center">
+                            ROOT OVERRIDE
+                        </button>
+                        <button onclick="executeCommand('sysinfo')" class="py-1.5 px-2 rounded border border-green-600 bg-green-950/70 hover:bg-green-800 text-green-200 text-xs font-bold transition text-center">
+                            SYS DIAGNOSTIC
+                        </button>
+                    </div>
+                </div>
+
+            </section>
+
+        </main>
+
+        <!-- FOOTER -->
+        <footer class="cyber-panel px-4 py-2 rounded-lg flex flex-wrap justify-between items-center text-xs text-gray-500 gap-2">
+            <div>
+                OPERATOR: <span class="text-green-400 font-bold">DIBYARANJAN</span> // OMNI CYBER INFRASTRUCTURE &copy; 2026
+            </div>
+            <div class="flex items-center gap-4 font-mono">
+                <span>ENCRYPTION: AES-256-GCM</span>
+                <span>STATUS: <span class="text-green-400 font-bold">ONLINE & SECURE</span></span>
+            </div>
+        </footer>
+
+    </div>
+
+    <!-- SCRIPT LOGIC -->
+    <script>
+        /* ==========================================================================
+           1. SYNTHETIC WEB AUDIO API ENGINE (Keyclicks, Beeps, Heavy Sirens)
+           ========================================================================== */
+        let audioCtx = null;
+        let audioEnabled = true;
+
+        function initAudio() {
+            if (!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            }
+        }
+
+        function toggleAudio() {
+            initAudio();
+            audioEnabled = !audioEnabled;
+            const btn = document.getElementById('audio-toggle');
+            const icon = document.getElementById('audio-icon');
+            if (audioEnabled) {
+                btn.classList.add('text-green-400');
+                icon.className = 'fa-solid fa-volume-high';
+                playBeep(850, 0.05, 'sine');
+            } else {
+                btn.classList.remove('text-green-400');
+                icon.className = 'fa-solid fa-volume-xmark';
+            }
+        }
+
+        function playBeep(freq = 600, duration = 0.04, type = 'sine', volume = 0.04) {
+            if (!audioEnabled) return;
+            initAudio();
+            try {
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.type = type;
+                osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+                gain.gain.setValueAtTime(volume, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + duration);
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.start();
+                osc.stop(audioCtx.currentTime + duration);
+            } catch(e) {}
+        }
+
+        function playKeyClick() {
+            const freqs = [1100, 1300, 1500, 1700, 950];
+            const randFreq = freqs[Math.floor(Math.random() * freqs.length)];
+            playBeep(randFreq, 0.015, 'triangle', 0.03);
+        }
+
+        /* ==========================================================================
+           2. MATRIX DIGITAL RAIN CANVAS ENGINE (Green/Cyan/Red Themes)
+           ========================================================================== */
+        const matrixCanvas = document.getElementById('matrix-canvas');
+        const mCtx = matrixCanvas.getContext('2d');
+
+        function resizeMatrix() {
+            matrixCanvas.width = window.innerWidth;
+            matrixCanvas.height = window.innerHeight;
+        }
+        resizeMatrix();
+        window.addEventListener('resize', resizeMatrix);
+
+        const matrixChars = 'DIBYARANJAN0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ§±$%&*#@<>/\\';
+        let fontSize = 14;
+        let columns = Math.floor(window.innerWidth / fontSize);
+        let drops = Array(columns).fill(1);
+        let matrixColor = '#22c55e';
+
+        function drawMatrix() {
+            mCtx.fillStyle = 'rgba(3, 7, 6, 0.08)';
+            mCtx.fillRect(0, 0, matrixCanvas.width, matrixCanvas.height);
+
+            mCtx.fillStyle = matrixColor;
+            mCtx.font = fontSize + 'px monospace';
+
+            columns = Math.floor(matrixCanvas.width / fontSize);
+            if(drops.length < columns) {
+                while(drops.length < columns) drops.push(Math.floor(Math.random() * -100));
+            }
+
+            for (let i = 0; i < drops.length; i++) {
+                const text = matrixChars.charAt(Math.floor(Math.random() * matrixChars.length));
+                mCtx.fillText(text, i * fontSize, drops[i] * fontSize);
+
+                if (drops[i] * fontSize > matrixCanvas.height && Math.random() > 0.975) {
+                    drops[i] = 0;
+                }
+                drops[i]++;
+            }
+        }
+        setInterval(drawMatrix, 33);
+
+        /* ==========================================================================
+           3. HACKER TYPER / DIGITAL CODING STREAM ENGINE
+           ========================================================================== */
+        let typerEnabled = true;
+
+        const HIGH_LEVEL_EXPLOITS = [
+            `// DIBYARANJAN QUANTUM EXPLOIT MODULE v5.0\n#include <linux/kernel.h>\n#include <linux/module.h>\n\nstatic int __init inject_payload(void) {\n    printk(KERN_INFO "Bypassing Security Enforcement for Operator Dibyaranjan...\\n");\n    disable_mmu_protection();\n    return 0;\n}\n`,
+            `/* Neural Memory Injection Driver */\nvoid override_kernel_gate(uint64_t target_addr) {\n    #pragma omp parallel for\n    for (int i = 0; i < 64; i++) {\n        volatile uint32_t* ptr = (uint32_t*)(target_addr + (i * 8));\n        *ptr = 0x90909090; // NOP Sled Override\n    }\n}\n`,
+            `# Python Cyber Stealth Tunnel - Commander Dibyaranjan\nimport socket, ssl, crypto\n\ndef establish_tunnel(target_host, port=443):\n    context = ssl.create_default_context()\n    with socket.create_connection((target_host, port)) as sock:\n        with context.wrap_socket(sock, server_hostname=target_host) as ssock:\n            ssock.sendall(b"GRANT_ROOT_ACCESS --user Dibyaranjan\\r\\n")\n            return ssock.recv(1024)\n`,
+            `// GLSL Neural Shader Matrix Mutation\nuniform vec2 u_resolution;\nuniform float u_time;\nvoid main() {\n    vec2 st = gl_FragCoord.xy / u_resolution.xy;\n    gl_FragColor = vec4(0.1, st.x * sin(u_time), 0.3, 1.0);\n}\n`
+        ];
+
+        let typerBlockIdx = 0;
+        let typerCharIdx = 0;
+
+        function toggleTyperMode() {
+            typerEnabled = !typerEnabled;
+            document.getElementById('typer-status').innerText = typerEnabled ? 'ACTIVE' : 'DISABLED';
+            document.getElementById('typer-status').className = typerEnabled ? 'text-green-400 font-bold' : 'text-red-400 font-bold';
+            playBeep(650, 0.05);
+        }
+
+        // Global Keydown Handler: Any Physical Key triggers streaming code
+        window.addEventListener('keydown', (e) => {
+            // Ignore if input focused inside specific fields
+            if (document.activeElement.id === 'crack-target' || document.activeElement.id === 'scan-target-ip') {
+                return;
+            }
+
+            playKeyClick();
+
+            if (!typerEnabled) return;
+
+            const codeBox = document.getElementById('code-ide-box');
+            const currentBlock = HIGH_LEVEL_EXPLOITS[typerBlockIdx];
+
+            const chunkSize = 6;
+            const chunk = currentBlock.substring(typerCharIdx, typerCharIdx + chunkSize);
+            typerCharIdx += chunkSize;
+
+            codeBox.textContent += chunk;
+
+            if (typerCharIdx >= currentBlock.length) {
+                typerCharIdx = 0;
+                typerBlockIdx = (typerBlockIdx + 1) % HIGH_LEVEL_EXPLOITS.length;
+            }
+
+            codeBox.scrollTop = codeBox.scrollHeight;
+        });
+
+        /* ==========================================================================
+           4. INTENSE HEAVY PASSWORD BRUTE-FORCE SIMULATOR
+           ========================================================================== */
+        let crackInterval = null;
+
+        function startHeavyBruteForce() {
+            const targetInput = document.getElementById('crack-target');
+            const targetKey = (targetInput.value || 'DIBYA_QUANTUM_KEY').toUpperCase();
+            const display = document.getElementById('crack-display');
+            const status = document.getElementById('crack-status');
+            const crackerBox = document.getElementById('cracker-box');
+            const attemptsEl = document.getElementById('crack-attempts');
+            const speedEl = document.getElementById('crack-speed');
+            const memAddrEl = document.getElementById('crack-mem-addr');
+            const bar = document.getElementById('crack-bar');
+            const pct = document.getElementById('crack-pct');
+            const tempVal = document.getElementById('temp-val');
+            const tempBar = document.getElementById('temp-bar');
+
+            if (crackInterval) clearInterval(crackInterval);
+
+            // Activate Red Emergency Visual Alarm
+            crackerBox.classList.add('alarm-flash');
+            status.innerText = 'ATTACK ACTIVE';
+            status.className = 'text-[10px] text-red-500 font-bold animate-pulse tracking-widest';
+
+            const charset = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*#_';
+            let resolvedIndices = new Set();
+            let totalAttempts = 0;
+            let currentPct = 0;
+
+            // Alarm Siren Audio
+            playBeep(350, 0.25, 'sawtooth', 0.1);
+
+            crackInterval = setInterval(() => {
+                totalAttempts += Math.floor(2500000 + Math.random() * 1500000);
+                attemptsEl.innerText = totalAttempts.toLocaleString();
+                speedEl.innerText = (8.4 + Math.random() * 4.6).toFixed(2) + ' GH/s';
+                
+                // Random Memory Address Flickering
+                const randMem = '0x' + Math.floor(Math.random() * 0xFFFFFFFF).toString(16).toUpperCase().padStart(8, '0');
+                memAddrEl.innerText = randMem;
+
+                // Spiking CPU Thermal Gauge during Heavy Crack
+                const spikeTemp = Math.floor(75 + Math.random() * 20);
+                tempVal.innerText = spikeTemp + '°C';
+                tempBar.style.width = spikeTemp + '%';
+                tempBar.className = 'bg-red-500 h-1.5 transition-all duration-300';
+
+                playBeep(250 + Math.random() * 800, 0.02, 'square', 0.035);
+
+                // Incrementally resolve key indices
+                if (resolvedIndices.size < targetKey.length) {
+                    if (Math.random() > 0.3) {
+                        let randIdx;
+                        do {
+                            randIdx = Math.floor(Math.random() * targetKey.length);
+                        } while (resolvedIndices.has(randIdx));
+                        resolvedIndices.add(randIdx);
+                    }
+                }
+
+                currentPct = Math.floor((resolvedIndices.size / targetKey.length) * 100);
+                bar.style.width = currentPct + '%';
+                pct.innerText = currentPct + '%';
+
+                // Construct Dynamic Hash Mutation Display
+                let outputHtml = '';
+                for (let i = 0; i < targetKey.length; i++) {
+                    if (resolvedIndices.has(i)) {
+                        outputHtml += `<span class="text-green-400 font-bold">${targetKey[i]}</span>`;
+                    } else {
+                        const randChar = charset.charAt(Math.floor(Math.random() * charset.length));
+                        outputHtml += `<span class="text-red-500/80">${randChar}</span>`;
+                    }
+                }
+                display.innerHTML = outputHtml;
+
+                // Crack Completed
+                if (resolvedIndices.size === targetKey.length) {
+                    clearInterval(crackInterval);
+                    crackerBox.classList.remove('alarm-flash');
+                    status.innerText = 'DECRYPTED SUCCESS';
+                    status.className = 'text-[10px] text-green-400 font-bold tracking-widest';
+                    bar.style.width = '100%';
+                    pct.innerText = '100%';
+
+                    // Reset Thermals
+                    tempVal.innerText = '48°C';
+                    tempBar.style.width = '48%';
+                    tempBar.className = 'bg-yellow-500 h-1.5 transition-all duration-300';
+
+                    // Victory Sound Cascade
+                    playBeep(900, 0.1, 'sine', 0.08);
+                    setTimeout(() => playBeep(1300, 0.2, 'sine', 0.08), 120);
+                    setTimeout(() => playBeep(1800, 0.35, 'sine', 0.08), 280);
+
+                    printTerminalOutput(`[DECRYPTION COMPLETE]: Target Hash Unlocked for Operator Dibyaranjan: ${targetKey}`, 'text-yellow-400 font-bold');
+                }
+            }, 60);
+        }
+
+        /* ==========================================================================
+           5. INTERACTIVE CLI COMMAND ENGINE
+           ========================================================================== */
+        const terminalOutput = document.getElementById('terminal-output');
+        const terminalInput = document.getElementById('terminal-input');
+
+        const COMMAND_HELP = `
+DIBYARANJAN OPERATIONAL COMMAND MATRIX:
+  • help             : Display available system commands
+  • whoami           : Display Operator Credentials & Clearance
+  • crack <hash>     : Execute Heavy Brute-Force Password Decrypter
+  • scan <ip>        : Scan network ports for given target IP
+  • typecode         : Inject high-level C++/Assembly code snippet
+  • matrix <green/cyan/red> : Switch digital rain color theme
+  • sysinfo          : Run system health & hardware diagnostic
+  • clear            : Clear console log output
+`;
+
+        function printTerminalOutput(text, colorClass = 'text-green-400') {
+            const line = document.createElement('div');
+            line.className = `${colorClass} font-mono text-xs sm:text-sm`;
+            line.textContent = text;
+            terminalOutput.appendChild(line);
+            terminalOutput.scrollTop = terminalOutput.scrollHeight;
+        }
+
+        function handleTerminalSubmit(e) {
+            e.preventDefault();
+            const rawCmd = terminalInput.value.trim();
+            if (!rawCmd) return;
+
+            playBeep(750, 0.03, 'sine');
+
+            // Print Prompt Line
+            const promptLine = document.createElement('div');
+            promptLine.className = 'text-gray-300 font-bold text-xs sm:text-sm';
+            promptLine.innerHTML = `<span class="text-green-400">dibyaranjan@root:~#</span> ${escapeHtml(rawCmd)}`;
+            terminalOutput.appendChild(promptLine);
+
+            terminalInput.value = '';
+            const lowerCmd = rawCmd.toLowerCase();
+
+            if (lowerCmd === 'clear') {
+                terminalOutput.innerHTML = '';
+                return;
+            }
+
+            if (lowerCmd === 'help') {
+                printTerminalOutput(COMMAND_HELP, 'text-yellow-400');
+            } else if (lowerCmd === 'whoami') {
+                printTerminalOutput('OPERATOR: Dibyaranjan | SECURITY CLEARANCE: LEVEL 5 (OMNI-SUPERUSER) | STATUS: ACTIVE', 'text-cyan-300');
+            } else if (lowerCmd.startsWith('crack ')) {
+                const target = rawCmd.substring(6).trim();
+                document.getElementById('crack-target').value = target;
+                startHeavyBruteForce();
+            } else if (lowerCmd.startsWith('scan')) {
+                const parts = rawCmd.split(' ');
+                if (parts[1]) document.getElementById('scan-target-ip').value = parts[1];
+                startPortScan();
+            } else if (lowerCmd === 'typecode') {
+                const codeBox = document.getElementById('code-ide-box');
+                codeBox.textContent += `\n// Manual Injection by Dibyaranjan\nvoid execute_kernel_override() {\n    system("chmod 777 /etc/shadow");\n}\n`;
+                codeBox.scrollTop = codeBox.scrollHeight;
+                printTerminalOutput('[TYPECODE]: Injected C++ payload into Hacker IDE window.', 'text-emerald-400');
+            } else if (lowerCmd.startsWith('matrix ')) {
+                const color = lowerCmd.split(' ')[1];
+                if (color === 'cyan') matrixColor = '#06b6d4';
+                else if (color === 'red') matrixColor = '#ef4444';
+                else matrixColor = '#22c55e';
+                printTerminalOutput(`Matrix rain visual theme set to: ${color.toUpperCase()}`, 'text-green-300');
+            } else if (lowerCmd === 'sysinfo') {
+                printTerminalOutput(`[SYSTEM DIAGNOSTIC]: CPU Load: ${document.getElementById('cpu-val').innerText} | Memory: ${document.getElementById('ram-val').innerText} | Temp: ${document.getElementById('temp-val').innerText} | OPERATOR: Dibyaranjan`, 'text-emerald-400');
+            } else {
+                printTerminalOutput(`Unknown command '${rawCmd}'. Type 'help' for available operational command list.`, 'text-red-400');
+            }
+
+            terminalOutput.scrollTop = terminalOutput.scrollHeight;
+        }
+
+        function executeCommand(cmdStr) {
+            terminalInput.value = cmdStr;
+            handleTerminalSubmit(new Event('submit'));
+        }
+
+        function executeOverride() {
+            printTerminalOutput('[ROOT OVERRIDE INITIATED]: Bypassing Quantum Security Gateways...', 'text-yellow-400 animate-pulse');
+            playBeep(250, 0.2, 'sawtooth');
+            setTimeout(() => {
+                printTerminalOutput('[OVERRIDE SUCCESSFUL]: WELCOME OPERATOR DIBYARANJAN. OMNI-ROOT ACCESS GRANTED.', 'text-green-400 font-bold');
+                playBeep(1100, 0.3, 'sine');
+            }, 900);
+        }
+
+        function toggleCRT() {
+            document.body.classList.toggle('crt-overlay');
+            playBeep(500, 0.05);
+        }
+
+        function escapeHtml(text) {
+            return text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+        }
+
+        /* ==========================================================================
+           6. LIVE METRICS & NETWORK RADAR LOGIC
+           ========================================================================== */
+        const netCanvas = document.getElementById('net-chart');
+        const nCtx = netCanvas.getContext('2d');
+        let netHistory = new Array(30).fill(25);
+
+        function updateMetrics() {
+            const cpuVal = Math.floor(30 + Math.random() * 40);
+            document.getElementById('cpu-val').innerText = cpuVal + '%';
+            document.getElementById('cpu-bar').style.width = cpuVal + '%';
+
+            const ramVal = (26.2 + Math.random() * 5).toFixed(1);
+            const ramPct = Math.floor((ramVal / 128) * 100);
+            document.getElementById('ram-val').innerText = `${ramVal} / 128 GB`;
+            document.getElementById('ram-bar').style.width = ramPct + '%';
+
+            const netVal = (1.1 + Math.random() * 0.8).toFixed(2);
+            document.getElementById('net-val').innerText = netVal + ' GB/s';
+            netHistory.push(netVal * 100);
+            netHistory.shift();
+
+            // Render Real-Time Net Line Chart
+            nCtx.clearRect(0, 0, netCanvas.width, netCanvas.height);
+            nCtx.strokeStyle = '#06b6d4';
+            nCtx.lineWidth = 1.5;
+            nCtx.beginPath();
+            const step = netCanvas.width / (netHistory.length - 1);
+            for (let i = 0; i < netHistory.length; i++) {
+                const x = i * step;
+                const y = netCanvas.height - (netHistory[i] / 200) * netCanvas.height;
+                if (i === 0) nCtx.moveTo(x, y);
+                else nCtx.lineTo(x, y);
+            }
+            nCtx.stroke();
+        }
+        setInterval(updateMetrics, 1800);
+
+        // Port Scanner Logic
+        const ports = [
+            { port: 21, svc: 'FTP Secure' },
+            { port: 22, svc: 'SSH Encrypted Shell' },
+            { port: 80, svc: 'HTTP Web Gateway' },
+            { port: 443, svc: 'HTTPS SSL Tunnel' },
+            { port: 3306, svc: 'MySQL QuantumDB' },
+            { port: 8080, svc: 'Proxy Gateway' }
+        ];
+
+        function startPortScan() {
+            const targetIp = document.getElementById('scan-target-ip').value || '10.84.192.254';
+            const logs = document.getElementById('port-scan-logs');
+            logs.innerHTML = `<div class="text-cyan-400">// Initiating port reconnaissance for IP ${targetIp}...</div>`;
+
+            ports.forEach((p, idx) => {
+                setTimeout(() => {
+                    playBeep(550 + idx * 80, 0.03, 'sine');
+                    const isOpen = Math.random() > 0.35;
+                    const statusText = isOpen 
+                        ? `<span class="text-green-400 font-bold">[OPEN]</span>` 
+                        : `<span class="text-red-400">[CLOSED]</span>`;
+                    
+                    const row = document.createElement('div');
+                    row.innerHTML = `PORT ${p.port} (${p.svc}): ${statusText}`;
+                    logs.appendChild(row);
+                    logs.scrollTop = logs.scrollHeight;
+                }, (idx + 1) * 280);
+            });
+        }
+    </script>
+</body>
+</html>
+```
